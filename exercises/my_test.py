@@ -15,7 +15,7 @@ profPass = 'augurrox'
 
 #Tests if the program can handle a wrong username
 def test_login(grading_system):
-    username = 'saab'
+    username = 'qwerty'
     password =  'boomr345'
     grading_system.login(username,password)
 
@@ -57,7 +57,7 @@ def test_create_assignment(grading_system):
 
 def test_add_student(grading_system):
     grading_system.login(profUser,profPass) #login as Professor
-    courseCheck = 'databases'
+    courseCheck = 'web_development'
     grading_system.usr.add_student('yted91',courseCheck)
     with open('Data/users.json','r') as f:
         data = json.load(f)
@@ -95,7 +95,8 @@ def test_submit_assignment(grading_system):
 def test_check_ontime(grading_system):
     grading_system.login('akend3','123454321')
     testing = grading_system.usr.check_ontime('03/01/20','03/02/20')
-    assert testing
+    testing2 = grading_system.usr.check_ontime('03/03/20','03/02/20')
+    assert testing != testing2
 
 
 def test_check_grades(grading_system):
@@ -103,7 +104,7 @@ def test_check_grades(grading_system):
     gradeList = grading_system.usr.check_grades('databases')
     with open('Data/users.json','r') as f:
         data = json.load(f)
-    if gradeList[0][1] != data['akend3']['courses']['databases']['assignment1']['grade']: #if the first grades aren't equal, assert False
+    if gradeList[0][1] != data['akend3']['courses']['databases']['assignment4']['grade']: #if the first grades aren't equal, assert False
         assert False
 
 def test_view_assignments(grading_system):
@@ -112,14 +113,14 @@ def test_view_assignments(grading_system):
     with open('Data/courses.json','r') as f:
         data = json.load(f)
     
-    if len(assignmentList) != len(data['databases']['assignments']):#if the lengths don't match up, the test should fail
+    if len(assignmentList) != len(data['cloud_computing']['assignments']):#if the lengths don't match up, the test should fail
         assert False
 
 
 
 #Last five tests
 
-#tests whether or not a new username is valid
+#tests whether or not a new username is valid (i.e. does the username already exist?)
 def test_new_username(grading_system):
     with open('Data/users.json','r') as f:
         data = json.load(f)
@@ -158,11 +159,26 @@ def test_if_professor_teaches_course(grading_system):
     assert teachesCourse
 
 
-#tests if 
-#def test_(grading_system):
+#tests if a course has a professor
+def test_course_professor(grading_system):
+    with open('Data/courses.json','r') as f:
+        data = json.load(f)
+    
+    testCourse = 'no_course'
+    testProf = data[testCourse]['professor']
+    if testProf == '' or testProf == 'none':
+        assert False
 
-#tests if 
-#def test_(grading_system):
+#tests if the user db is successfully loaded
+def test_load_user_db(grading_system):
+    grading_system.login(profUser,profPass)
+    gradingSystemData = grading_system.load_user_db()
+    with open('Data/courses.json') as f:
+            data = json.load(f)
+
+    if data != gradingSystemData:
+        assert False
+    
 
 @pytest.fixture
 def grading_system():
